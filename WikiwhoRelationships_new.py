@@ -153,6 +153,9 @@ class Wikiwho():
 
             revision_prev = revision_curr
 
+            if '*' not in rev_data.keys():
+                continue
+
             if 'sha1' not in rev_data.keys():
                 rev_data['sha1'] = Text.calculateHash(rev_data['*'].encode("utf-8"))
 
@@ -176,7 +179,7 @@ class Wikiwho():
                 revision_curr.wikipedia_id = int(rev_data['revid'])
                 revision_curr.length = len(rev_data['*'])
                 revision_curr.timestamp = rev_data['timestamp']
-                revision_curr.comment = rev_data['comment']
+                revision_curr.comment = rev_data.get('comment', '')
 
                 # Relation of the current relation.
                 relation = Relation()
@@ -189,9 +192,9 @@ class Wikiwho():
                     revision_curr.contributor_name = rev_data['user'].encode('utf-8')
                     relation.author = rev_data['user'].encode('utf-8')
                 else:
-                    revision_curr.contributor_id = 'Not Available ' + rev_data['revid']
-                    revision_curr.contribur_name = 'Not Available ' + rev_data['revid']
-                    relation.author = 'Not Available ' + rev_data['revid']
+                    revision_curr.contributor_id = 'Not Available: ' + str(rev_data['revid'])
+                    revision_curr.contribur_name = 'Not Available: ' + str(rev_data['revid'])
+                    relation.author = 'Not Available ' + str(rev_data['revid'])
 
                 # Content within the revision.
                 text_curr = rev_data['*'].encode('utf-8')
@@ -895,7 +898,7 @@ class Wikiwho():
 
                 if not(curr_matched):
                     word_curr = Word()
-                    word_curr.internal_id = WORD_ID
+                    word_curr.internal_id = self.WORD_ID
                     word_curr.value = word
                     word_curr.author_id = revision_curr.contributor_id
                     word_curr.author_name = revision_curr.contributor_name
